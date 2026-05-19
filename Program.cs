@@ -1,4 +1,6 @@
 using JewelryEcommerce.Services;
+using JewelryEcommerce.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,11 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+// Entity Framework Core - PostgreSQL
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<AppDBContext>(options =>
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddSingleton<IProductService, ProductService>();
 builder.Services.AddSingleton<IOrderService, OrderService>();
