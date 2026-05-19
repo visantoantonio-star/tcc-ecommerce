@@ -1,0 +1,80 @@
+@model List<JewelryEcommerce.Domain.Product>
+@{
+  ViewData["Title"] = "Coleções";
+  Layout = "~/Views/Shared/_Layout.cshtml";
+  var categories = ViewBag.Categories as List<string> ?? new();
+  var currentCategory = ViewBag.CurrentCategory as string;
+  var searchQuery = ViewBag.SearchQuery as string;
+}
+
+<div class="page-header">
+  <div class="breadcrumb">
+    <a href="/">Início</a> <i class="ti ti-chevron-right" style="font-size:0.6rem;"></i>
+    <span>Coleções</span>
+    @if (!string.IsNullOrEmpty(currentCategory)) { <i class="ti ti-chevron-right" style="font-size:0.6rem;"></i><span>@currentCategory</span> }
+  </div>
+  <h1>@(string.IsNullOrEmpty(currentCategory) ? "Todas as Joias" : currentCategory)</h1>
+  <p style="color:var(--mid);margin-top:0.5rem;">@Model.Count peça@(Model.Count == 1 ? "" : "s") encontrada@(Model.Count == 1 ? "" : "s")</p>
+</div>
+
+<div class="section">
+  <div class="filters">
+    <a href="/Product" class="filter-btn @(string.IsNullOrEmpty(currentCategory) && string.IsNullOrEmpty(searchQuery) ? "active" : "")">Todas</a>
+    @foreach (var cat in categories)
+    {
+      <a href="/Product?category=@cat" class="filter-btn @(currentCategory == cat ? "active" : "")">@cat</a>
+    }
+    <form method="get" action="/Product" class="search-box">
+      <input name="search" type="text" class="search-input" placeholder="Buscar joia..." value="@searchQuery" />
+      <button type="submit" class="search-btn"><i class="ti ti-search"></i></button>
+    </form>
+  </div>
+
+  @if (!Model.Any())
+  {
+    <div class="empty-state">
+      <div class="empty-state-icon"><i class="ti ti-search-off"></i></div>
+      <h3>Nenhuma peça encontrada</h3>
+      <p>Tente buscar por outro termo ou explore nossas categorias.</p>
+      <a href="/Product" class="btn btn-outline">Ver todas as joias</a>
+    </div>
+  }
+  else
+  {
+    <div class="products-grid">
+      @foreach (var p in Model)
+      {
+        <div class="product-card">
+          <div class="product-card-image">
+            <div class="product-placeholder">◇</div>
+            @if (p.IsNew) { <span class="badge badge-new">Novo</span> }
+            else if (p.OriginalPrice.HasValue) { <span class="badge badge-sale">Oferta</span> }
+          </div>
+          <div class="product-card-body">
+            <div class="product-category">@p.Category</div>
+            <h3 class="product-name">@p.Name</h3>
+            <div class="product-material">@p.Material</div>
+            <div class="product-rating">
+              <span class="stars" data-rating="@p.Rating"></span>
+              <span class="rating-count">(@p.ReviewCount)</span>
+            </div>
+            <div class="product-price">
+              <span class="price">R$ @p.Price.ToString("N0")</span>
+              @if (p.OriginalPrice.HasValue) { <span class="price-original">R$ @p.OriginalPrice.Value.ToString("N0")</span> }
+            </div>
+          </div>
+          <div class="product-card-actions">
+            <a href="/Product/Details/@p.Id" class="btn btn-outline btn-sm" style="flex:1;">Detalhes</a>
+            <form method="post" action="/Cart/Add" style="flex:1;">
+              <input type="hidden" name="productId" value="@p.Id" />
+              <input type="hidden" name="quantity" value="1" />
+              <button type="submit" class="btn btn-gold btn-sm" style="width:100%;">
+                <i class="ti ti-shopping-bag"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

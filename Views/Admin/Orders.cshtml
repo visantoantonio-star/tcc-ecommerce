@@ -1,0 +1,49 @@
+@model List<JewelryEcommerce.Domain.Order>
+@{
+  ViewData["Title"] = "Pedidos";
+  Layout = "~/Views/Shared/_AdminLayout.cshtml";
+  var currentStatus = ViewBag.CurrentStatus as string;
+}
+
+<div class="admin-header">
+  <h1>Pedidos</h1>
+  <span style="font-size:0.85rem;color:var(--mid);">@Model.Count pedido@(Model.Count == 1?"":"s")</span>
+</div>
+
+<div style="display:flex;gap:0.75rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+  <a href="/Admin/Orders" class="filter-btn @(string.IsNullOrEmpty(currentStatus)?"active":"")">Todos</a>
+  @foreach (var s in Enum.GetValues<JewelryEcommerce.Domain.OrderStatus>())
+  {
+    <a href="/Admin/Orders?status=@s" class="filter-btn @(currentStatus == s.ToString()?"active":"")">@s</a>
+  }
+</div>
+
+<div class="table-wrapper">
+  <table class="data-table">
+    <thead>
+      <tr><th>Pedido</th><th>Cliente</th><th>E-mail</th><th>Itens</th><th>Total</th><th>Status</th><th>Data</th><th></th></tr>
+    </thead>
+    <tbody>
+      @foreach (var o in Model)
+      {
+        <tr>
+          <td><strong>#@o.Id</strong></td>
+          <td>@o.CustomerName</td>
+          <td style="color:var(--mid);font-size:0.8rem;">@o.CustomerEmail</td>
+          <td>@o.Items.Count item@(o.Items.Count==1?"":"s")</td>
+          <td style="font-family:var(--font-serif);">R$ @o.Total.ToString("N0")</td>
+          <td><span class="status-badge status-@o.Status">@o.Status</span></td>
+          <td style="color:var(--mid);">@o.CreatedAt.ToString("dd/MM HH:mm")</td>
+          <td><a href="/Admin/OrderDetails/@o.Id" style="color:var(--gold);text-decoration:none;font-size:0.75rem;">Detalhes →</a></td>
+        </tr>
+      }
+    </tbody>
+  </table>
+  @if (!Model.Any())
+  {
+    <div style="text-align:center;padding:3rem;color:var(--mid);">
+      <i class="ti ti-shopping-cart" style="font-size:2rem;display:block;margin-bottom:1rem;"></i>
+      Nenhum pedido encontrado.
+    </div>
+  }
+</div>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@ViewData["Title"] – Aurum Joias</title>
+  <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <a class="navbar-brand" href="/">Aurum<span>.</span></a>
+    <ul class="navbar-nav">
+      <li><a href="/" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">Início</a></li>
+      <li><a href="/Product" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Product" ? "active" : "")">Coleções</a></li>
+      <li><a href="/Product?category=Anéis">Anéis</a></li>
+      <li><a href="/Product?category=Colares">Colares</a></li>
+      <li><a href="/Product?category=Brincos">Brincos</a></li>
+    </ul>
+    <div class="navbar-actions">
+      <a href="/Cart" class="btn-icon" title="Carrinho">
+        <i class="ti ti-shopping-bag"></i>
+        @if (ViewBag.CartCount != null && (int)ViewBag.CartCount > 0)
+        {
+          <span class="cart-badge">@ViewBag.CartCount</span>
+        }
+      </a>
+      <a href="/Admin" class="btn-icon" title="Painel Admin">
+        <i class="ti ti-layout-dashboard"></i>
+      </a>
+    </div>
+  </nav>
+
+  @if (TempData["Success"] != null)
+  {
+    <div class="alert alert-success" style="position:fixed;top:80px;right:2rem;z-index:9999;min-width:280px;">
+      <i class="ti ti-check"></i> @TempData["Success"]
+    </div>
+  }
+
+  <main>
+    @RenderBody()
+  </main>
+
+  <footer class="footer">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">Aurum<span>.</span></div>
+        <p class="footer-desc">Joias exclusivas que eternizam momentos. Ouro, diamantes e pedras preciosas selecionadas com rigor para quem valoriza o extraordinário.</p>
+      </div>
+      <div>
+        <div class="footer-title">Coleções</div>
+        <ul class="footer-links">
+          <li><a href="/Product?category=Anéis">Anéis</a></li>
+          <li><a href="/Product?category=Colares">Colares</a></li>
+          <li><a href="/Product?category=Brincos">Brincos</a></li>
+          <li><a href="/Product?category=Pulseiras">Pulseiras</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-title">Informações</div>
+        <ul class="footer-links">
+          <li><a href="#">Sobre Nós</a></li>
+          <li><a href="#">Certificados</a></li>
+          <li><a href="#">Cuidados com Joias</a></li>
+          <li><a href="#">Política de Troca</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-title">Contato</div>
+        <ul class="footer-links">
+          <li><a href="#">contato@aurum.com.br</a></li>
+          <li><a href="#">(11) 3000-4000</a></li>
+          <li><a href="#">Seg–Sex: 9h–18h</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© @DateTime.Now.Year Aurum Joias. Todos os direitos reservados.</div>
+  </footer>
+
+  <script src="~/js/site.js" asp-append-version="true"></script>
+  @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

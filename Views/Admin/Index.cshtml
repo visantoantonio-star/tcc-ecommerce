@@ -1,0 +1,96 @@
+@{
+  ViewData["Title"] = "Dashboard";
+  Layout = "~/Views/Shared/_AdminLayout.cshtml";
+  var stats = ViewBag.Stats as JewelryEcommerce.Domain.DashboardStats;
+  var recentOrders = ViewBag.RecentOrders as List<JewelryEcommerce.Domain.Order> ?? new();
+  var maxRev = stats?.MonthlySales.Max(s => s.Revenue) ?? 1;
+}
+
+<div class="admin-header">
+  <h1>Dashboard</h1>
+  <a href="/Product" class="btn btn-outline btn-sm" target="_blank">Ver loja <i class="ti ti-external-link"></i></a>
+</div>
+
+<div class="stat-cards">
+  <div class="stat-card">
+    <div class="stat-label">Receita Total</div>
+    <div class="stat-value">R$ @stats?.TotalRevenue.ToString("N0")</div>
+    <div class="stat-sub"><i class="ti ti-trending-up" style="color:var(--success);"></i> Pedidos confirmados</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total de Pedidos</div>
+    <div class="stat-value">@stats?.TotalOrders</div>
+    <div class="stat-sub">Desde o início</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Pedidos Pendentes</div>
+    <div class="stat-value" style="color:var(--warning);">@stats?.PendingOrders</div>
+    <div class="stat-sub">Aguardando processamento</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Produtos Ativos</div>
+    <div class="stat-value">@stats?.TotalProducts</div>
+    <div class="stat-sub">No catálogo</div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;">
+  <!-- Chart -->
+  <div style="background:var(--white);padding:1.5rem;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+      <h3 style="font-family:var(--font-serif);font-size:1.1rem;">Receita Mensal</h3>
+      <span style="font-size:0.7rem;color:var(--mid);letter-spacing:0.1em;text-transform:uppercase;">2024</span>
+    </div>
+    <div class="chart-bars">
+      @if (stats != null)
+      {
+        @foreach (var s in stats.MonthlySales)
+        {
+          <div class="chart-bar-wrap">
+            <div class="chart-bar" data-value="@s.Revenue" style="height:0;transition:height 0.6s ease;"></div>
+            <span class="chart-label">@s.Month</span>
+          </div>
+        }
+      }
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div style="background:var(--white);padding:1.5rem;">
+    <h3 style="font-family:var(--font-serif);font-size:1.1rem;margin-bottom:1.5rem;">Ações Rápidas</h3>
+    <div style="display:flex;flex-direction:column;gap:0.75rem;">
+      <a href="/Admin/CreateProduct" class="btn btn-gold btn-sm"><i class="ti ti-plus"></i> Novo Produto</a>
+      <a href="/Admin/Orders" class="btn btn-outline btn-sm"><i class="ti ti-shopping-cart"></i> Gerenciar Pedidos</a>
+      <a href="/Admin/Products" class="btn btn-outline btn-sm"><i class="ti ti-diamond"></i> Gerenciar Produtos</a>
+      <a href="/Admin/Orders?status=Pending" class="btn btn-outline btn-sm" style="border-color:var(--warning);color:var(--warning);"><i class="ti ti-alert-circle"></i> Pendentes (@stats?.PendingOrders)</a>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Orders -->
+<div class="table-wrapper">
+  <div style="padding:1rem 1.5rem;border-bottom:1px solid var(--light);display:flex;justify-content:space-between;align-items:center;">
+    <h3 style="font-family:var(--font-serif);font-size:1.1rem;">Pedidos Recentes</h3>
+    <a href="/Admin/Orders" style="font-size:0.75rem;color:var(--gold);text-decoration:none;letter-spacing:0.1em;text-transform:uppercase;">Ver todos →</a>
+  </div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Pedido</th><th>Cliente</th><th>Total</th><th>Status</th><th>Data</th><th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach (var o in recentOrders)
+      {
+        <tr>
+          <td><strong>#@o.Id</strong></td>
+          <td>@o.CustomerName</td>
+          <td style="font-family:var(--font-serif);">R$ @o.Total.ToString("N0")</td>
+          <td><span class="status-badge status-@o.Status">@o.Status</span></td>
+          <td style="color:var(--mid);">@o.CreatedAt.ToString("dd/MM/yyyy")</td>
+          <td><a href="/Admin/OrderDetails/@o.Id" style="color:var(--gold);text-decoration:none;font-size:0.75rem;">Detalhes →</a></td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

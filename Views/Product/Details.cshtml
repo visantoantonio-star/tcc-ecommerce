@@ -1,0 +1,106 @@
+@model JewelryEcommerce.Domain.Product
+@{
+  ViewData["Title"] = Model.Name;
+  Layout = "~/Views/Shared/_Layout.cshtml";
+  var related = ViewBag.Related as List<JewelryEcommerce.Domain.Product> ?? new();
+}
+
+<div style="padding-top:72px;">
+  <div class="section" style="padding-bottom:3rem;">
+    <div class="breadcrumb">
+      <a href="/">Início</a> <i class="ti ti-chevron-right" style="font-size:0.6rem;"></i>
+      <a href="/Product">Coleções</a> <i class="ti ti-chevron-right" style="font-size:0.6rem;"></i>
+      <a href="/Product?category=@Model.Category">@Model.Category</a> <i class="ti ti-chevron-right" style="font-size:0.6rem;"></i>
+      <span>@Model.Name</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;">
+      <!-- Image -->
+      <div style="background:var(--dark);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;position:relative;">
+        <div style="font-family:var(--font-serif);font-size:12rem;color:rgba(201,168,76,0.3);">◇</div>
+        @if (Model.IsNew) { <span class="badge badge-new" style="top:1.5rem;left:1.5rem;">Novo</span> }
+        @if (Model.OriginalPrice.HasValue) { <span class="badge badge-sale" style="top:1.5rem;left:1.5rem;">Oferta</span> }
+      </div>
+
+      <!-- Info -->
+      <div>
+        <span style="font-size:0.7rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);">@Model.Category</span>
+        <h1 style="font-family:var(--font-serif);font-size:2.5rem;margin:0.75rem 0 0.5rem;color:var(--dark);">@Model.Name</h1>
+        <div style="color:var(--mid);font-size:0.85rem;margin-bottom:1rem;">@Model.Material</div>
+
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;">
+          <span class="stars" data-rating="@Model.Rating" style="color:var(--gold);font-size:1rem;"></span>
+          <span style="font-size:0.8rem;color:var(--mid);">@Model.Rating.ToString("F1") (@Model.ReviewCount avaliações)</span>
+        </div>
+
+        <div style="display:flex;align-items:baseline;gap:1rem;margin-bottom:0.75rem;">
+          <span style="font-family:var(--font-serif);font-size:2.2rem;color:var(--dark);">R$ @Model.Price.ToString("N0")</span>
+          @if (Model.OriginalPrice.HasValue)
+          {
+            <span style="font-size:1rem;color:var(--mid);text-decoration:line-through;">R$ @Model.OriginalPrice.Value.ToString("N0")</span>
+            var disc = (int)Math.Round((1 - Model.Price / Model.OriginalPrice.Value) * 100);
+            <span style="font-size:0.75rem;background:var(--danger);color:white;padding:0.2rem 0.5rem;">-@disc%</span>
+          }
+        </div>
+        <p style="font-size:0.75rem;color:var(--success);margin-bottom:2rem;">
+          <i class="ti ti-check"></i> @Model.Stock unidades em estoque
+        </p>
+
+        <p style="color:var(--dark-3);line-height:1.8;margin-bottom:2rem;">@Model.Description</p>
+
+        <form method="post" action="/Cart/Add" style="display:flex;gap:1rem;margin-bottom:1.5rem;">
+          <input type="hidden" name="productId" value="@Model.Id" />
+          <input type="number" name="quantity" value="1" min="1" max="@Model.Stock"
+                 style="width:80px;padding:0.75rem;border:1px solid var(--light);text-align:center;font-family:var(--font-sans);font-size:0.9rem;" />
+          <button type="submit" class="btn btn-gold" style="flex:1;">
+            <i class="ti ti-shopping-bag"></i> Adicionar ao Carrinho
+          </button>
+        </form>
+        <a href="/Cart" class="btn btn-outline" style="width:100%;justify-content:center;">
+          <i class="ti ti-credit-card"></i> Comprar agora
+        </a>
+
+        <div style="border-top:1px solid var(--light);margin-top:2rem;padding-top:1.5rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          @foreach (var item in new[] {
+            ("ti-certificate","Certificado incluso"),
+            ("ti-truck-delivery","Frete grátis"),
+            ("ti-refresh","30 dias para troca"),
+            ("ti-shield-check","Garantia 2 anos")
+          })
+          {
+            <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.78rem;color:var(--dark-3);">
+              <i class="ti @item.Item1" style="color:var(--gold);"></i> @item.Item2
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (related.Any())
+  {
+    <section class="section" style="border-top:1px solid var(--light);padding-top:4rem;">
+      <div class="section-header">
+        <span class="section-eyebrow">Você também pode gostar</span>
+        <h2 class="section-title">Peças Relacionadas</h2>
+        <div class="section-line"></div>
+      </div>
+      <div class="products-grid">
+        @foreach (var p in related)
+        {
+          <div class="product-card">
+            <div class="product-card-image"><div class="product-placeholder">◇</div></div>
+            <div class="product-card-body">
+              <div class="product-category">@p.Category</div>
+              <h3 class="product-name">@p.Name</h3>
+              <div class="product-price"><span class="price">R$ @p.Price.ToString("N0")</span></div>
+            </div>
+            <div class="product-card-actions">
+              <a href="/Product/Details/@p.Id" class="btn btn-outline btn-sm" style="flex:1;">Ver</a>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+</div>

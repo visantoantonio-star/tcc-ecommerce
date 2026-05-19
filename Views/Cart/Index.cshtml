@@ -1,0 +1,85 @@
+@model List<JewelryEcommerce.Domain.CartItem>
+@{
+  ViewData["Title"] = "Carrinho";
+  Layout = "~/Views/Shared/_Layout.cshtml";
+  decimal total = ViewBag.Total ?? 0m;
+}
+
+<div class="page-header" style="padding-top:6rem;">
+  <h1>Seu Carrinho</h1>
+  <p style="color:var(--mid);margin-top:0.5rem;">@Model.Count item@(Model.Count == 1 ? "" : "s")</p>
+</div>
+
+<div class="section">
+  @if (!Model.Any())
+  {
+    <div class="empty-state">
+      <div class="empty-state-icon"><i class="ti ti-shopping-bag"></i></div>
+      <h3>Carrinho vazio</h3>
+      <p>Explore nossas coleções e encontre a joia perfeita.</p>
+      <a href="/Product" class="btn btn-gold">Explorar Joias</a>
+    </div>
+  }
+  else
+  {
+    <div class="cart-layout">
+      <div>
+        <div style="border-top:2px solid var(--gold);"></div>
+        @foreach (var item in Model)
+        {
+          <div class="cart-item">
+            <div class="cart-item-img">
+              <span style="font-family:var(--font-serif);font-size:2rem;color:rgba(201,168,76,0.4);">◇</span>
+            </div>
+            <div>
+              <div style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:0.25rem;">Joia</div>
+              <div style="font-family:var(--font-serif);font-size:1.1rem;margin-bottom:0.25rem;">@item.ProductName</div>
+              <div style="font-size:0.85rem;color:var(--mid);">R$ @item.Price.ToString("N0") / unidade</div>
+              <div class="qty-control">
+                <form method="post" action="/Cart/Update" style="display:contents;">
+                  <input type="hidden" name="productId" value="@item.ProductId" />
+                  <button type="submit" name="quantity" value="@(item.Quantity - 1)" class="qty-btn">−</button>
+                  <span style="width:32px;text-align:center;font-size:0.9rem;">@item.Quantity</span>
+                  <button type="submit" name="quantity" value="@(item.Quantity + 1)" class="qty-btn">+</button>
+                </form>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-family:var(--font-serif);font-size:1.2rem;margin-bottom:1rem;">R$ @item.Subtotal.ToString("N0")</div>
+              <form method="post" action="/Cart/Remove">
+                <input type="hidden" name="productId" value="@item.ProductId" />
+                <button type="submit" style="background:none;border:none;cursor:pointer;color:var(--mid);font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;transition:color 0.2s;" onmouseover="this.style.color='var(--danger)'" onmouseout="this.style.color='var(--mid)'">
+                  <i class="ti ti-trash"></i> Remover
+                </button>
+              </form>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div>
+        <div class="order-summary">
+          <div class="summary-title">Resumo do Pedido</div>
+          @foreach (var item in Model)
+          {
+            <div class="summary-row">
+              <span>@item.ProductName × @item.Quantity</span>
+              <span>R$ @item.Subtotal.ToString("N0")</span>
+            </div>
+          }
+          <div class="summary-row"><span>Frete</span><span style="color:#4A7C59;">Grátis</span></div>
+          <div class="summary-total">
+            <span>Total</span>
+            <span style="color:var(--gold);">R$ @total.ToString("N0")</span>
+          </div>
+          <a href="/Cart/Checkout" class="btn btn-gold" style="width:100%;justify-content:center;margin-top:1.5rem;">
+            Finalizar Pedido <i class="ti ti-arrow-right"></i>
+          </a>
+          <a href="/Product" class="btn btn-outline" style="width:100%;justify-content:center;margin-top:0.75rem;border-color:rgba(255,255,255,0.2);color:rgba(255,255,255,0.6);">
+            Continuar Comprando
+          </a>
+        </div>
+      </div>
+    </div>
+  }
+</div>

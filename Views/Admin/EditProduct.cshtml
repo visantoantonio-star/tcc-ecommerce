@@ -1,0 +1,76 @@
+@model JewelryEcommerce.Domain.Product
+@{
+  ViewData["Title"] = "Editar Produto";
+  Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="admin-header">
+  <h1>Editar Produto #@Model.Id</h1>
+  <a href="/Admin/Products" class="btn btn-outline btn-sm"><i class="ti ti-arrow-left"></i> Voltar</a>
+</div>
+
+<div style="max-width:720px;background:var(--white);padding:2rem;">
+  <form method="post" action="/Admin/EditProduct">
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <input type="hidden" name="CreatedAt" value="@Model.CreatedAt.ToString("o")" />
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Nome do Produto *</label>
+        <input type="text" name="Name" class="form-control" value="@Model.Name" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Categoria *</label>
+        <select name="Category" class="form-control">
+         @foreach (var c in new[]{"Anéis","Colares","Brincos","Pulseiras","Pingentes","Outros"})
+{
+    <option value="@c" selected="@(Model.Category == c ? "selected" : null)">@c</option>
+}
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Descrição</label>
+      <textarea name="Description" class="form-control" rows="4">@Model.Description</textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Material</label>
+      <input type="text" name="Material" class="form-control" value="@Model.Material" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Preço (R$) *</label>
+        <input type="number" name="Price" class="form-control" step="0.01" value="@Model.Price" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Preço Original</label>
+        <input type="number" name="OriginalPrice" class="form-control" step="0.01" value="@Model.OriginalPrice" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Estoque *</label>
+        <input type="number" name="Stock" class="form-control" value="@Model.Stock" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Avaliação</label>
+        <input type="number" name="Rating" class="form-control" step="0.1" value="@Model.Rating" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">URL da Imagem</label>
+      <input type="text" name="ImageUrl" class="form-control" value="@Model.ImageUrl" />
+    </div>
+    <div style="display:flex;gap:2rem;margin-bottom:1.5rem;">
+      <label style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;cursor:pointer;">
+        <input type="checkbox" name="IsFeatured" value="true" @(Model.IsFeatured ? "checked" : "") /> Produto em destaque
+      </label>
+      <label style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;cursor:pointer;">
+        <input type="checkbox" name="IsNew" value="true" @(Model.IsNew ? "checked" : "") /> Marcar como Novo
+      </label>
+    </div>
+    <div style="display:flex;gap:1rem;">
+      <button type="submit" class="btn btn-gold"><i class="ti ti-check"></i> Salvar Alterações</button>
+      <a href="/Admin/Products" class="btn btn-outline">Cancelar</a>
+    </div>
+  </form>
+</div>

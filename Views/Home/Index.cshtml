@@ -1,0 +1,120 @@
+@{
+  ViewData["Title"] = "Início";
+  Layout = "~/Views/Shared/_Layout.cshtml";
+  var featured = ViewBag.Featured as List<JewelryEcommerce.Domain.Product> ?? new();
+  var categories = ViewBag.Categories as List<string> ?? new();
+}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <span class="hero-eyebrow">Nova Coleção 2024</span>
+    <h1 class="hero-title">
+      Joias que<br>contam <em>histórias</em><br>eternas
+    </h1>
+    <p class="hero-desc">
+      Peças únicas em ouro 18k, diamantes e pedras preciosas naturais. Cada joia é uma obra de arte criada para durar gerações.
+    </p>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+      <a href="/Product" class="btn btn-primary">
+        <i class="ti ti-diamond"></i> Explorar Coleção
+      </a>
+      <a href="/Product?category=Anéis" class="btn btn-outline-gold">Ver Anéis</a>
+    </div>
+  </div>
+  <div class="hero-image">
+    <div class="hero-placeholder">◇</div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="section" style="background:var(--white);padding-bottom:4rem;">
+  <div class="section-header">
+    <span class="section-eyebrow">Explorar por categoria</span>
+    <h2 class="section-title">Nossas Coleções</h2>
+    <div class="section-line"></div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;">
+    @foreach (var cat in categories)
+    {
+      var icon = cat switch {
+        "Anéis" => "ti-ring",
+        "Colares" => "ti-necklace",
+        "Brincos" => "ti-ear",
+        "Pulseiras" => "ti-bracelet",
+        "Pingentes" => "ti-medal",
+        _ => "ti-diamond"
+      };
+      <a href="/Product?category=@cat" style="display:flex;flex-direction:column;align-items:center;gap:0.75rem;padding:2rem 1rem;background:var(--cream);text-decoration:none;transition:var(--transition);" onmouseover="this.style.background='var(--dark)'" onmouseout="this.style.background='var(--cream)'">
+        <i class="ti @icon" style="font-size:1.8rem;color:var(--gold);"></i>
+        <span style="font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dark-3);">@cat</span>
+      </a>
+    }
+  </div>
+</section>
+
+<!-- FEATURED PRODUCTS -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-eyebrow">Seleção Especial</span>
+    <h2 class="section-title">Peças em Destaque</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="products-grid">
+    @foreach (var p in featured)
+    {
+      <div class="product-card">
+        <div class="product-card-image">
+          <div class="product-placeholder">◇</div>
+          @if (p.IsNew) { <span class="badge badge-new">Novo</span> }
+          else if (p.OriginalPrice.HasValue) { <span class="badge badge-sale">Oferta</span> }
+        </div>
+        <div class="product-card-body">
+          <div class="product-category">@p.Category</div>
+          <h3 class="product-name">@p.Name</h3>
+          <div class="product-material">@p.Material</div>
+          <div class="product-rating">
+            <span class="stars" data-rating="@p.Rating"></span>
+            <span class="rating-count">(@p.ReviewCount)</span>
+          </div>
+          <div class="product-price">
+            <span class="price">R$ @p.Price.ToString("N0")</span>
+            @if (p.OriginalPrice.HasValue) { <span class="price-original">R$ @p.OriginalPrice.Value.ToString("N0")</span> }
+          </div>
+        </div>
+        <div class="product-card-actions">
+          <a href="/Product/Details/@p.Id" class="btn btn-outline btn-sm" style="flex:1;">Ver detalhes</a>
+          <form method="post" action="/Cart/Add" style="flex:1;">
+            <input type="hidden" name="productId" value="@p.Id" />
+            <input type="hidden" name="quantity" value="1" />
+            <button type="submit" class="btn btn-gold btn-sm" style="width:100%;">
+              <i class="ti ti-shopping-bag"></i> Comprar
+            </button>
+          </form>
+        </div>
+      </div>
+    }
+  </div>
+  <div style="text-align:center;margin-top:3rem;">
+    <a href="/Product" class="btn btn-outline">Ver todas as peças</a>
+  </div>
+</section>
+
+<!-- VALUE PROPS -->
+<section class="section-sm" style="background:var(--dark);margin-top:0;">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;text-align:center;">
+    @foreach (var item in new[] {
+      ("ti-certificate","Certificado de Autenticidade","Todas as peças acompanham laudo gemológico"),
+      ("ti-truck-delivery","Entrega Segura","Frete grátis para compras acima de R$ 500"),
+      ("ti-refresh","30 dias para troca","Satisfação garantida ou devolvemos"),
+      ("ti-shield-check","Garantia de 2 anos","Contra defeitos de fabricação")
+    })
+    {
+      <div style="padding:1.5rem 1rem;">
+        <i class="ti @item.Item1" style="font-size:2rem;color:var(--gold);margin-bottom:1rem;display:block;"></i>
+        <div style="font-family:var(--font-serif);font-size:1rem;color:var(--white);margin-bottom:0.5rem;">@item.Item2</div>
+        <div style="font-size:0.78rem;color:rgba(255,255,255,0.5);">@item.Item3</div>
+      </div>
+    }
+  </div>
+</section>

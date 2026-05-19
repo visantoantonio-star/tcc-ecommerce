@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin – @ViewData["Title"] – Aurum Joias</title>
+  <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+</head>
+<body style="padding-top:0;">
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="admin-logo">Aurum<span>.</span> Admin</div>
+      <ul class="admin-nav">
+        <li><a href="/Admin" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+          <i class="ti ti-dashboard"></i> Dashboard
+        </a></li>
+        <li><a href="/Admin/Products" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("Product") == true ? "active" : "")">
+          <i class="ti ti-diamond"></i> Produtos
+        </a></li>
+        <li><a href="/Admin/Orders" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("Order") == true ? "active" : "")">
+          <i class="ti ti-shopping-cart"></i> Pedidos
+        </a></li>
+        <li style="margin-top:auto;border-top:1px solid rgba(255,255,255,0.08);padding-top:1rem;">
+          <a href="/"><i class="ti ti-arrow-left"></i> Ver loja</a>
+        </li>
+      </ul>
+    </aside>
+    <div class="admin-main">
+      @if (TempData["Success"] != null)
+      {
+        <div class="alert alert-success"><i class="ti ti-check"></i> @TempData["Success"]</div>
+      }
+      @RenderBody()
+    </div>
+  </div>
+  <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>

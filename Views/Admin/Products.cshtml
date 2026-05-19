@@ -1,0 +1,48 @@
+@model List<JewelryEcommerce.Domain.Product>
+@{
+  ViewData["Title"] = "Produtos";
+  Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="admin-header">
+  <h1>Produtos</h1>
+  <a href="/Admin/CreateProduct" class="btn btn-gold btn-sm"><i class="ti ti-plus"></i> Novo Produto</a>
+</div>
+
+<div class="table-wrapper">
+  <table class="data-table">
+    <thead>
+      <tr><th>ID</th><th>Produto</th><th>Categoria</th><th>Preço</th><th>Estoque</th><th>Destaque</th><th>Ações</th></tr>
+    </thead>
+    <tbody>
+      @foreach (var p in Model)
+      {
+        <tr>
+          <td style="color:var(--mid);">#@p.Id</td>
+          <td>
+            <div style="font-weight:400;">@p.Name</div>
+            <div style="font-size:0.75rem;color:var(--mid);">@p.Material</div>
+          </td>
+          <td>@p.Category</td>
+          <td style="font-family:var(--font-serif);">R$ @p.Price.ToString("N0")</td>
+          <td>
+            <span style="color:@(p.Stock < 5 ? "var(--danger)" : p.Stock < 10 ? "var(--warning)" : "var(--success)");">@p.Stock un.</span>
+          </td>
+          <td>
+            @if (p.IsFeatured) { <span class="status-badge" style="background:#FEF9E7;color:#B8860B;">Sim</span> }
+            else { <span style="color:var(--mid);font-size:0.8rem;">—</span> }
+          </td>
+          <td>
+            <div style="display:flex;gap:0.5rem;align-items:center;">
+              <a href="/Admin/EditProduct/@p.Id" class="btn btn-outline btn-sm"><i class="ti ti-edit"></i></a>
+              <form method="post" action="/Admin/DeleteProduct" onsubmit="return confirm('Confirmar exclusão de @p.Name?');">
+                <input type="hidden" name="id" value="@p.Id" />
+                <button type="submit" class="btn btn-danger btn-sm"><i class="ti ti-trash"></i></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

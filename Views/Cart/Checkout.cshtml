@@ -1,0 +1,76 @@
+@model List<JewelryEcommerce.Domain.CartItem>
+@{
+  ViewData["Title"] = "Checkout";
+  Layout = "~/Views/Shared/_Layout.cshtml";
+  decimal total = ViewBag.Total ?? 0m;
+}
+
+<div class="page-header" style="padding-top:6rem;">
+  <div class="breadcrumb">
+    <a href="/Cart">Carrinho</a> <i class="ti ti-chevron-right" style="font-size:0.6rem;"></i> <span>Checkout</span>
+  </div>
+  <h1>Finalizar Pedido</h1>
+</div>
+
+<div class="section">
+  <div class="cart-layout">
+    <div>
+      <h2 style="font-family:var(--font-serif);font-size:1.5rem;margin-bottom:2rem;color:var(--dark);">Dados de Entrega</h2>
+      <form method="post" action="/Cart/PlaceOrder">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Nome completo</label>
+            <input type="text" name="customerName" class="form-control" required placeholder="Seu nome" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">E-mail</label>
+            <input type="email" name="customerEmail" class="form-control" required placeholder="seu@email.com" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Telefone / WhatsApp</label>
+          <input type="tel" name="customerPhone" class="form-control" placeholder="(11) 99999-9999" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Endereço completo</label>
+          <input type="text" name="shippingAddress" class="form-control" required placeholder="Rua, número, bairro, cidade, estado, CEP" />
+        </div>
+
+        <div style="background:var(--cream);padding:1.5rem;margin-bottom:2rem;">
+          <h3 style="font-family:var(--font-serif);font-size:1.1rem;margin-bottom:1rem;">Pagamento</h3>
+          <p style="font-size:0.8rem;color:var(--mid);">Esta é uma demonstração. Em produção, integre com Stripe, PagSeguro ou Mercado Pago.</p>
+          <div style="display:flex;gap:1rem;margin-top:1rem;flex-wrap:wrap;">
+            @foreach (var pay in new[]{"Cartão de Crédito","Boleto","PIX"})
+            {
+              <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.85rem;">
+                <input type="radio" name="payment" value="@pay" @(pay=="PIX"?"checked":"") /> @pay
+              </label>
+            }
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-gold" style="width:100%;justify-content:center;padding:1rem 2rem;font-size:0.85rem;">
+          <i class="ti ti-lock"></i> Confirmar Pedido · R$ @total.ToString("N0")
+        </button>
+      </form>
+    </div>
+
+    <div>
+      <div class="order-summary">
+        <div class="summary-title">Seus Itens</div>
+        @foreach (var item in Model)
+        {
+          <div class="summary-row">
+            <span>@item.ProductName × @item.Quantity</span>
+            <span>R$ @item.Subtotal.ToString("N0")</span>
+          </div>
+        }
+        <div class="summary-row"><span>Frete</span><span style="color:#4A7C59;">Grátis</span></div>
+        <div class="summary-total">
+          <span>Total</span>
+          <span style="color:var(--gold);">R$ @total.ToString("N0")</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

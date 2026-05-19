@@ -1,0 +1,32 @@
+# Build results
+bin/
+obj/
+.vs/
+.vscode/
+
+# Dependency directories
+packages/
+.packages/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Rider
+.idea/
+*.sln.iml
+
+# macOS
+.DS_Store
+
+# Node (if using npm)
+node_modules/
+dist/
+
+# Local environment
+.env
+.env.local
+appsettings.Development.json
