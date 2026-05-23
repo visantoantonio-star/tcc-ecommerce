@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>@ViewData["Title"] – Aurum Joias</title>
+  <title>@ViewData["Title"] – Limerjoias</title>
   <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
 </head>
 <body>
   <nav class="navbar">
-    <a class="navbar-brand" href="/">Aurum<span>.</span></a>
+    <a class="navbar-brand" href="/">Limerjoias<span>.</span></a>
     <ul class="navbar-nav">
       <li><a href="/" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">Início</a></li>
       <li><a href="/Product" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Product" ? "active" : "")">Coleções</a></li>
@@ -45,7 +45,7 @@
   <footer class="footer">
     <div class="footer-grid">
       <div>
-        <div class="footer-brand">Aurum<span>.</span></div>
+        <div class="footer-brand">Limerjoias<span>.</span></div>
         <p class="footer-desc">Joias exclusivas que eternizam momentos. Ouro, diamantes e pedras preciosas selecionadas com rigor para quem valoriza o extraordinário.</p>
       </div>
       <div>
@@ -69,13 +69,13 @@
       <div>
         <div class="footer-title">Contato</div>
         <ul class="footer-links">
-          <li><a href="#">contato@aurum.com.br</a></li>
+          <li><a href="#">contato@limerjoias.com.br</a></li>
           <li><a href="#">(11) 3000-4000</a></li>
           <li><a href="#">Seg–Sex: 9h–18h</a></li>
         </ul>
       </div>
     </div>
-    <div class="footer-bottom">© @DateTime.Now.Year Aurum Joias. Todos os direitos reservados.</div>
+    <div class="footer-bottom">© @DateTime.Now.Year Limerjoias. Todos os direitos reservados.</div>
   </footer>
 
   <script src="~/js/site.js" asp-append-version="true"></script>

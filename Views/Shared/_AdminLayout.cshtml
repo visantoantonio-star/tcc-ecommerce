@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin – @ViewData["Title"] – Aurum Joias</title>
+  <title>Admin – @ViewData["Title"] – Limerjoias</title>
   <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
 </head>
 <body style="padding-top:0;">
   <div class="admin-layout">
     <aside class="admin-sidebar">
-      <div class="admin-logo">Aurum<span>.</span> Admin</div>
+      <div class="admin-logo">Limerjoias<span>.</span> Admin</div>
       <ul class="admin-nav">
         <li><a href="/Admin" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
           <i class="ti ti-dashboard"></i> Dashboard
@@ -21,7 +21,8 @@
         <li><a href="/Admin/Orders" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("Order") == true ? "active" : "")">
           <i class="ti ti-shopping-cart"></i> Pedidos
         </a></li>
-        <li style="margin-top:auto;border-top:1px solid rgba(255,255,255,0.08);padding-top:1rem;">
+        <li style="margin-top:auto;border-top:1px solid rgba(255,255,255,0.08);padding-top:1rem;display:flex;flex-direction:column;gap:0.75rem;">
+          <a href="/Admin/Logout"><i class="ti ti-power"></i> Sair</a>
           <a href="/"><i class="ti ti-arrow-left"></i> Ver loja</a>
         </li>
       </ul>
