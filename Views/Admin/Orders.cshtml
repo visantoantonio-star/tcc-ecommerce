@@ -3,6 +3,15 @@
   ViewData["Title"] = "Pedidos";
   Layout = "~/Views/Shared/_AdminLayout.cshtml";
   var currentStatus = ViewBag.CurrentStatus as string;
+  string StatusLabel(JewelryEcommerce.Domain.OrderStatus status) => status switch
+  {
+    JewelryEcommerce.Domain.OrderStatus.Pending => "Pendente",
+    JewelryEcommerce.Domain.OrderStatus.Confirmed => "Confirmado",
+    JewelryEcommerce.Domain.OrderStatus.Shipped => "Enviado",
+    JewelryEcommerce.Domain.OrderStatus.Delivered => "Entregue",
+    JewelryEcommerce.Domain.OrderStatus.Cancelled => "Cancelado",
+    _ => status.ToString()
+  };
 }
 
 <div class="admin-header">
@@ -14,7 +23,7 @@
   <a href="/Admin/Orders" class="filter-btn @(string.IsNullOrEmpty(currentStatus)?"active":"")">Todos</a>
   @foreach (var s in Enum.GetValues<JewelryEcommerce.Domain.OrderStatus>())
   {
-    <a href="/Admin/Orders?status=@s" class="filter-btn @(currentStatus == s.ToString()?"active":"")">@s</a>
+    <a href="/Admin/Orders?status=@s" class="filter-btn @(currentStatus == s.ToString()?"active":"")">@StatusLabel(s)</a>
   }
 </div>
 
@@ -32,7 +41,7 @@
           <td style="color:var(--mid);font-size:0.8rem;">@o.CustomerEmail</td>
           <td>@o.Items.Count item@(o.Items.Count==1?"":"s")</td>
           <td style="font-family:var(--font-serif);">R$ @o.Total.ToString("N0")</td>
-          <td><span class="status-badge status-@o.Status">@o.Status</span></td>
+          <td><span class="status-badge status-@o.Status">@StatusLabel(o.Status)</span></td>
           <td style="color:var(--mid);">@o.CreatedAt.ToString("dd/MM HH:mm")</td>
           <td><a href="/Admin/OrderDetails/@o.Id" style="color:var(--gold);text-decoration:none;font-size:0.75rem;">Detalhes →</a></td>
         </tr>
