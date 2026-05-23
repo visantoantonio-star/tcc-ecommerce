@@ -7,9 +7,9 @@ public class Product
     public string Description { get; set; } = string.Empty;
     public decimal Price { get; set; }
     public decimal? OriginalPrice { get; set; }
-    public string ImageUrl { get; set; } = string.Empty;
-    public string Category { get; set; } = string.Empty;
-    public string Material { get; set; } = string.Empty;
+    public string? ImageUrl { get; set; }
+    public string? Category { get; set; }
+    public string? Material { get; set; }
     public int Stock { get; set; }
     public bool IsFeatured { get; set; }
     public bool IsNew { get; set; }
@@ -43,6 +43,7 @@ public class Order
 
 public class OrderItem
 {
+    public int Id { get; set; }
     public int OrderId { get; set; }
     public int ProductId { get; set; }
     public string ProductName { get; set; } = string.Empty;

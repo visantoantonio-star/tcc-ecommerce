@@ -17,8 +17,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<AppDBContext>(options =>
     options.UseNpgsql(connectionString));
 
-builder.Services.AddSingleton<IProductService, ProductService>();
-builder.Services.AddSingleton<IOrderService, OrderService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddHttpContextAccessor();
 

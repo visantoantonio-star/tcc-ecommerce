@@ -21,7 +21,7 @@ public class AppDBContext : DbContext
         modelBuilder.Entity<Product>(entity =>
         {
             entity.HasKey(e => e.Id);
-            
+
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(255);
@@ -74,8 +74,8 @@ public class AppDBContext : DbContext
                 .HasPrecision(12, 2);
 
             entity.Property(e => e.Status)
-                .HasMaxLength(50)
-                .HasDefaultValue("Pending");
+                .HasDefaultValue(OrderStatus.Pending)
+                .HasConversion<string>();
 
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
@@ -92,7 +92,7 @@ public class AppDBContext : DbContext
         // Configuração de OrderItem
         modelBuilder.Entity<OrderItem>(entity =>
         {
-            entity.HasKey(e => new { e.OrderId, e.ProductId });
+            entity.HasKey(e => e.Id);
 
             entity.Property(e => e.ProductName)
                 .IsRequired()
