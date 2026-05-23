@@ -34,7 +34,7 @@
     <h2 class="section-title">Nossas Coleções</h2>
     <div class="section-line"></div>
   </div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;">
+  <div class="collections-grid">
     @foreach (var cat in categories)
     {
       var icon = cat switch {
@@ -45,9 +45,9 @@
         "Pingentes" => "ti-medal",
         _ => "ti-diamond"
       };
-      <a href="/Product?category=@cat" style="display:flex;flex-direction:column;align-items:center;gap:0.75rem;padding:2rem 1rem;background:var(--cream);text-decoration:none;transition:var(--transition);" onmouseover="this.style.background='var(--dark)'" onmouseout="this.style.background='var(--cream)'">
-        <i class="ti @icon" style="font-size:1.8rem;color:var(--gold);"></i>
-        <span style="font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dark-3);">@cat</span>
+      <a href="/Product?category=@cat" class="collection-card">
+        <i class="ti @icon"></i>
+        <span>@cat</span>
       </a>
     }
   </div>
