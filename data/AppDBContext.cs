@@ -84,8 +84,8 @@ public class AppDBContext : DbContext
             entity.HasIndex(e => e.CustomerEmail);
 
             entity.HasMany(e => e.Items)
-                .WithOne()
-                .HasForeignKey("OrderId")
+                .WithOne(o => o.Order)
+                .HasForeignKey(e => e.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -100,11 +100,6 @@ public class AppDBContext : DbContext
 
             entity.Property(e => e.Price)
                 .HasPrecision(10, 2);
-
-            entity.HasOne<Order>()
-                .WithMany(o => o.Items)
-                .HasForeignKey(e => e.OrderId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne<Product>()
                 .WithMany()
