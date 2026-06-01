@@ -46,7 +46,14 @@
       {
         <div class="product-card">
           <div class="product-card-image">
-            <div class="product-placeholder">◇</div>
+            @if (!string.IsNullOrEmpty(p.ImageUrl))
+            {
+              <img src="@p.ImageUrl" alt="@p.Name" />
+            }
+            else
+            {
+              <div class="product-placeholder">◇</div>
+            }
             @if (p.IsNew) { <span class="badge badge-new">Novo</span> }
             else if (p.OriginalPrice.HasValue) { <span class="badge badge-sale">Oferta</span> }
           </div>
@@ -59,8 +66,8 @@
               <span class="rating-count">(@p.ReviewCount)</span>
             </div>
             <div class="product-price">
-              <span class="price">R$ @p.Price.ToString("N0")</span>
-              @if (p.OriginalPrice.HasValue) { <span class="price-original">R$ @p.OriginalPrice.Value.ToString("N0")</span> }
+              <span class="price">R$ @p.Price.ToString("N2")</span>
+              @if (p.OriginalPrice.HasValue) { <span class="price-original">R$ @p.OriginalPrice.Value.ToString("N2")</span> }
             </div>
           </div>
           <div class="product-card-actions">

@@ -16,8 +16,15 @@
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;">
       <!-- Image -->
-      <div style="background:var(--dark);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;position:relative;">
-        <div style="font-family:var(--font-serif);font-size:12rem;color:rgba(201,168,76,0.3);">◇</div>
+      <div style="background:var(--dark);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;position:relative; overflow:hidden;">
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+          <img src="@Model.ImageUrl" alt="@Model.Name" style="width:100%;height:100%;object-fit:cover;object-position:center;" />
+        }
+        else
+        {
+          <div style="font-family:var(--font-serif);font-size:12rem;color:rgba(201,168,76,0.3);">◇</div>
+        }
         @if (Model.IsNew) { <span class="badge badge-new" style="top:1.5rem;left:1.5rem;">Novo</span> }
         @if (Model.OriginalPrice.HasValue) { <span class="badge badge-sale" style="top:1.5rem;left:1.5rem;">Oferta</span> }
       </div>
@@ -34,10 +41,10 @@
         </div>
 
         <div style="display:flex;align-items:baseline;gap:1rem;margin-bottom:0.75rem;">
-          <span style="font-family:var(--font-serif);font-size:2.2rem;color:var(--dark);">R$ @Model.Price.ToString("N0")</span>
+          <span style="font-family:var(--font-serif);font-size:2.2rem;color:var(--dark);">R$ @Model.Price.ToString("N2")</span>
           @if (Model.OriginalPrice.HasValue)
           {
-            <span style="font-size:1rem;color:var(--mid);text-decoration:line-through;">R$ @Model.OriginalPrice.Value.ToString("N0")</span>
+            <span style="font-size:1rem;color:var(--mid);text-decoration:line-through;">R$ @Model.OriginalPrice.Value.ToString("N2")</span>
             var disc = (int)Math.Round((1 - Model.Price / Model.OriginalPrice.Value) * 100);
             <span style="font-size:0.75rem;background:var(--danger);color:white;padding:0.2rem 0.5rem;">-@disc%</span>
           }
@@ -89,11 +96,20 @@
         @foreach (var p in related)
         {
           <div class="product-card">
-            <div class="product-card-image"><div class="product-placeholder">◇</div></div>
+            <div class="product-card-image">
+              @if (!string.IsNullOrEmpty(p.ImageUrl))
+              {
+                <img src="@p.ImageUrl" alt="@p.Name" />
+              }
+              else
+              {
+                <div class="product-placeholder">◇</div>
+              }
+            </div>
             <div class="product-card-body">
               <div class="product-category">@p.Category</div>
               <h3 class="product-name">@p.Name</h3>
-              <div class="product-price"><span class="price">R$ @p.Price.ToString("N0")</span></div>
+              <div class="product-price"><span class="price">R$ @p.Price.ToString("N2")</span></div>
             </div>
             <div class="product-card-actions">
               <a href="/Product/Details/@p.Id" class="btn btn-outline btn-sm" style="flex:1;">Ver</a>

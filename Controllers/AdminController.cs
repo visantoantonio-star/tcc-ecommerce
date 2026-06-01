@@ -85,6 +85,10 @@ public class AdminController : Controller
     {
         var authResult = RequireAdmin();
         if (authResult != null) return authResult;
+        // Ensure numeric fields are within expected ranges to avoid DB errors
+        product.Rating = Math.Min(5m, Math.Max(0m, product.Rating));
+        if (product.Price < 0) product.Price = 0;
+        if (product.OriginalPrice.HasValue && product.OriginalPrice < 0) product.OriginalPrice = 0;
 
         _products.Add(product);
         TempData["Success"] = "Produto criado com sucesso!";
@@ -106,6 +110,10 @@ public class AdminController : Controller
     {
         var authResult = RequireAdmin();
         if (authResult != null) return authResult;
+        // Clamp numeric inputs
+        product.Rating = Math.Min(5m, Math.Max(0m, product.Rating));
+        if (product.Price < 0) product.Price = 0;
+        if (product.OriginalPrice.HasValue && product.OriginalPrice < 0) product.OriginalPrice = 0;
 
         _products.Update(product);
         TempData["Success"] = "Produto atualizado com sucesso!";

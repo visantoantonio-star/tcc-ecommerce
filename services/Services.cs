@@ -47,7 +47,15 @@ public class ProductService : IProductService
     {
         product.CreatedAt = DateTime.UtcNow;
         _db.Products.Add(product);
-        _db.SaveChanges();
+        try
+        {
+            _db.SaveChanges();
+        }
+        catch (Microsoft.EntityFrameworkCore.DbUpdateException)
+        {
+            Console.WriteLine($"Failed saving Product: Name={product.Name}, Price={product.Price}, OriginalPrice={product.OriginalPrice}, Rating={product.Rating}, Stock={product.Stock}, ReviewCount={product.ReviewCount}");
+            throw;
+        }
     }
 
     public void Update(Product product)

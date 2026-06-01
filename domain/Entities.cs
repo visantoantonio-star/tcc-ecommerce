@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace JewelryEcommerce.Domain;
 
 public class Product
@@ -5,7 +7,10 @@ public class Product
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
+    [Range(0, 9999999999999.99)]
     public decimal Price { get; set; }
+
+    [Range(0, 9999999999999.99)]
     public decimal? OriginalPrice { get; set; }
     public string? ImageUrl { get; set; }
     public string? Category { get; set; }
@@ -13,7 +18,8 @@ public class Product
     public int Stock { get; set; }
     public bool IsFeatured { get; set; }
     public bool IsNew { get; set; }
-    public double Rating { get; set; }
+    [Range(0, 5)]
+    public decimal Rating { get; set; }
     public int ReviewCount { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

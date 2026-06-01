@@ -30,10 +30,13 @@ public class AppDBContext : DbContext
                 .IsRequired();
 
             entity.Property(e => e.Price)
-                .HasPrecision(10, 2);
+                .HasPrecision(18, 2);
 
             entity.Property(e => e.OriginalPrice)
-                .HasPrecision(10, 2);
+                .HasPrecision(18, 2);
+
+            entity.Property(e => e.Rating)
+                .HasPrecision(5, 2);
 
             entity.Property(e => e.ImageUrl)
                 .HasMaxLength(500);
@@ -71,7 +74,7 @@ public class AppDBContext : DbContext
                 .IsRequired();
 
             entity.Property(e => e.Total)
-                .HasPrecision(12, 2);
+                .HasPrecision(18, 2);
 
             entity.Property(e => e.Status)
                 .HasDefaultValue(OrderStatus.Pending)
@@ -99,7 +102,7 @@ public class AppDBContext : DbContext
                 .HasMaxLength(255);
 
             entity.Property(e => e.Price)
-                .HasPrecision(10, 2);
+                .HasPrecision(18, 2);
 
             entity.HasOne<Product>()
                 .WithMany()
