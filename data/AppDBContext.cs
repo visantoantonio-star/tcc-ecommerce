@@ -78,7 +78,7 @@ public class AppDBContext : DbContext
 
             entity.Property(e => e.Status)
                 .HasDefaultValue(OrderStatus.Pending)
-                .HasConversion<string>();
+                .HasColumnType("order_status");
 
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");

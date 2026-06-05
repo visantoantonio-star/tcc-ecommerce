@@ -67,11 +67,15 @@ public class ProductService : IProductService
     public void Delete(int id)
     {
         var product = _db.Products.Find(id);
-        if (product != null)
-        {
-            _db.Products.Remove(product);
-            _db.SaveChanges();
-        }
+        if (product == null)
+            return;
+
+        var hasOrderItems = _db.OrderItems.Any(oi => oi.ProductId == id);
+        if (hasOrderItems)
+            throw new InvalidOperationException("Não é possível excluir um produto que já está vinculado a pedidos.");
+
+        _db.Products.Remove(product);
+        _db.SaveChanges();
     }
 
     public List<string> GetCategories() =>

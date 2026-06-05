@@ -1,5 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using JewelryEcommerce.Services;
 using JewelryEcommerce.Domain;
 
@@ -13,11 +14,13 @@ public class AdminController : Controller
 
     private readonly IProductService _products;
     private readonly IOrderService _orders;
+    private readonly IWebHostEnvironment _environment;
 
-    public AdminController(IProductService products, IOrderService orders)
+    public AdminController(IProductService products, IOrderService orders, IWebHostEnvironment environment)
     {
         _products = products;
         _orders = orders;
+        _environment = environment;
     }
 
     private bool IsLoggedIn() => HttpContext.Session.GetString(AdminSessionKey) != null;
@@ -81,11 +84,17 @@ public class AdminController : Controller
     }
 
     [HttpPost]
-    public IActionResult CreateProduct(Product product)
+    [HttpPost]
+    public IActionResult CreateProduct(Product product, IFormFile? ImageFile)
     {
         var authResult = RequireAdmin();
         if (authResult != null) return authResult;
-        // Ensure numeric fields are within expected ranges to avoid DB errors
+
+        if (ImageFile != null && ImageFile.Length > 0)
+        {
+            product.ImageUrl = SaveImageFile(ImageFile);
+        }
+
         product.Rating = Math.Min(5m, Math.Max(0m, product.Rating));
         if (product.Price < 0) product.Price = 0;
         if (product.OriginalPrice.HasValue && product.OriginalPrice < 0) product.OriginalPrice = 0;
@@ -106,11 +115,16 @@ public class AdminController : Controller
     }
 
     [HttpPost]
-    public IActionResult EditProduct(Product product)
+    public IActionResult EditProduct(Product product, IFormFile? ImageFile)
     {
         var authResult = RequireAdmin();
         if (authResult != null) return authResult;
-        // Clamp numeric inputs
+
+        if (ImageFile != null && ImageFile.Length > 0)
+        {
+            product.ImageUrl = SaveImageFile(ImageFile);
+        }
+
         product.Rating = Math.Min(5m, Math.Max(0m, product.Rating));
         if (product.Price < 0) product.Price = 0;
         if (product.OriginalPrice.HasValue && product.OriginalPrice < 0) product.OriginalPrice = 0;
@@ -126,8 +140,16 @@ public class AdminController : Controller
         var authResult = RequireAdmin();
         if (authResult != null) return authResult;
 
-        _products.Delete(id);
-        TempData["Success"] = "Produto removido.";
+        try
+        {
+            _products.Delete(id);
+            TempData["Success"] = "Produto removido.";
+        }
+        catch (InvalidOperationException ex)
+        {
+            TempData["Error"] = ex.Message;
+        }
+
         return RedirectToAction("Products");
     }
 
@@ -164,5 +186,20 @@ public class AdminController : Controller
             _orders.UpdateStatus(id, s);
         TempData["Success"] = "Status do pedido atualizado!";
         return RedirectToAction("OrderDetails", new { id });
+    }
+
+    private string SaveImageFile(IFormFile imageFile)
+    {
+        var uploadsRoot = Path.Combine(_environment.WebRootPath, "images", "products");
+        if (!Directory.Exists(uploadsRoot))
+            Directory.CreateDirectory(uploadsRoot);
+
+        var fileName = Path.GetRandomFileName() + Path.GetExtension(imageFile.FileName);
+        var filePath = Path.Combine(uploadsRoot, fileName);
+
+        using var stream = System.IO.File.Create(filePath);
+        imageFile.CopyTo(stream);
+
+        return $"/images/products/{fileName}";
     }
 }

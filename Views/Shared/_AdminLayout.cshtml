@@ -32,6 +32,10 @@
       {
         <div class="alert alert-success"><i class="ti ti-check"></i> @TempData["Success"]</div>
       }
+      @if (TempData["Error"] != null)
+      {
+        <div class="alert alert-danger"><i class="ti ti-alert-circle"></i> @TempData["Error"]</div>
+      }
       @RenderBody()
     </div>
   </div>

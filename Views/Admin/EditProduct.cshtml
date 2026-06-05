@@ -10,9 +10,10 @@
 </div>
 
 <div style="max-width:720px;background:var(--white);padding:2rem;">
-  <form method="post" action="/Admin/EditProduct">
+  <form method="post" action="/Admin/EditProduct" enctype="multipart/form-data">
     <input type="hidden" name="Id" value="@Model.Id" />
     <input type="hidden" name="CreatedAt" value="@Model.CreatedAt.ToString("o")" />
+    <input type="hidden" name="ImageUrl" value="@Model.ImageUrl" />
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">Nome do Produto *</label>
@@ -57,9 +58,18 @@
       </div>
     </div>
     <div class="form-group">
-      <label class="form-label">URL da Imagem</label>
-      <input type="text" name="ImageUrl" class="form-control" value="@Model.ImageUrl" />
+      <label class="form-label">Imagem do Produto</label>
+      <input type="file" name="ImageFile" class="form-control" accept="image/*" />
     </div>
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+      <div class="form-group">
+        <label class="form-label">Imagem Atual</label>
+        <div style="max-width:300px;">
+          <img src="@Model.ImageUrl" alt="@Model.Name" style="width:100%;height:auto;object-fit:cover;border:1px solid #ddd;border-radius:8px;" />
+        </div>
+      </div>
+    }
     <div style="display:flex;gap:2rem;margin-bottom:1.5rem;">
       <label style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;cursor:pointer;">
         <input type="checkbox" name="IsFeatured" value="true" @(Model.IsFeatured ? "checked" : "") /> Produto em destaque
