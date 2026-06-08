@@ -23,7 +23,37 @@
     </div>
   </div>
   <div class="hero-image">
-    <div class="hero-placeholder">◇</div>
+    @if (featured.Count > 0)
+    {
+      <div class="carousel">
+        <div class="carousel-track">
+          @foreach (var p in featured)
+          {
+            <div class="carousel-slide">
+              @if (!string.IsNullOrEmpty(p.ImageUrl))
+              {
+                <img src="@p.ImageUrl" alt="@p.Name" class="carousel-image" />
+              }
+              else
+              {
+                <div class="carousel-placeholder">◇</div>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="carousel-dots">
+          @for (int i = 0; i < featured.Count; i++)
+          {
+            <button class="carousel-dot @(i == 0 ? "active" : "")" data-slide="@i" aria-label="Ir para slide @(i + 1)"></button>
+          }
+        </div>
+      </div>
+    }
+    else
+    {
+      <div class="hero-placeholder">◇</div>
+    }
   </div>
 </section>
 

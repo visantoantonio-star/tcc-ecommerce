@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using JewelryEcommerce.Domain;
 
 namespace JewelryEcommerce.Data;
@@ -78,7 +79,10 @@ public class AppDBContext : DbContext
 
             entity.Property(e => e.Status)
                 .HasDefaultValue(OrderStatus.Pending)
-                .HasColumnType("order_status");
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (OrderStatus)Enum.Parse(typeof(OrderStatus), v))
+                .HasColumnType("text");
 
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
@@ -107,7 +111,7 @@ public class AppDBContext : DbContext
             entity.HasOne<Product>()
                 .WithMany()
                 .HasForeignKey(e => e.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.SetNull);
         });
     }
 }

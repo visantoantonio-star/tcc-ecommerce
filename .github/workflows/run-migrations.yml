@@ -1,0 +1,77 @@
+name: Run SQL Migrations
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  migrations:
+    name: Apply SQL migrations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '10.0.300'
+
+      - name: Restore and build
+        run: |
+          dotnet --info
+          dotnet restore
+          dotnet build --configuration Release
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Run migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          set -euo pipefail
+          if [ -z "${DATABASE_URL:-}" ]; then
+            echo "Missing DATABASE_URL secret. Set it in repository secrets." >&2
+            exit 1
+          fi
+
+          LOGFILE="migrations.log"
+          echo "Starting migrations: $(date -u)" | tee -a "$LOGFILE"
+
+          # ensure schema_migrations table exists
+          echo "Ensuring schema_migrations table exists..." | tee -a "$LOGFILE"
+          psql "$DATABASE_URL" -c "CREATE TABLE IF NOT EXISTS schema_migrations (name text PRIMARY KEY, applied_at timestamptz NOT NULL DEFAULT now());" 2>&1 | tee -a "$LOGFILE"
+
+          apply_migration() {
+            name="$1"
+            file="$2"
+            echo "Applying $name -> $file" | tee -a "$LOGFILE"
+            psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "$file" 2>&1 | tee -a "$LOGFILE"
+            # record migration if not already recorded
+            psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c "INSERT INTO schema_migrations (name, applied_at) VALUES ('$name', now()) ON CONFLICT (name) DO NOTHING;" 2>&1 | tee -a "$LOGFILE"
+            echo "$name applied at $(date -u)" | tee -a "$LOGFILE"
+          }
+
+          apply_migration "20260608_0001_fix_orders_status_to_text" "Migrations/20260608_0001_fix_orders_status_to_text.up.sql"
+          apply_migration "20260608_0002_orderitems_productid_nullable" "Migrations/20260608_0002_orderitems_productid_nullable.up.sql"
+
+          echo "All migrations finished: $(date -u)" | tee -a "$LOGFILE"
+
+          # dump currently applied migrations to schema_version.txt
+          psql "$DATABASE_URL" -t -A -c "SELECT name || '|' || applied_at FROM schema_migrations ORDER BY applied_at;" > schema_version.txt
+          echo "Wrote schema_version.txt" | tee -a "$LOGFILE"
+
+          # show last lines of log for quick visibility
+          tail -n 40 "$LOGFILE" || true
+
+      - name: Upload migration logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: migration-logs
+          path: |
+            migrations.log
+            schema_version.txt

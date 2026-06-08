@@ -16,7 +16,7 @@ builder.Services.AddSession(options =>
 // Entity Framework Core - PostgreSQL
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDBContext>(options =>
-    options.UseNpgsql(connectionString, o => o.MapEnum<OrderStatus>()));
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
