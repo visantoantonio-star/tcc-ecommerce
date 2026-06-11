@@ -70,17 +70,13 @@ public class ProductService : IProductService
         if (product == null)
             return;
 
-        // Only prevent deletion if the product is referenced by order items
-        // that belong to non-finalized orders (i.e., not Delivered or Cancelled).
-        var hasActiveOrderItems = (from oi in _db.OrderItems
-                                   join o in _db.Orders on oi.OrderId equals o.Id
-                                   where oi.ProductId == id && o.Status != OrderStatus.Delivered && o.Status != OrderStatus.Cancelled
-                                   select oi).Any();
+        // Prevent deletion if any order items reference this product.
+        // The DB may still have an FK without ON DELETE SET NULL, so deleting
+        // would raise a foreign key violation. Require manual cleanup instead.
+        var hasAnyOrderItems = _db.OrderItems.Any(oi => oi.ProductId == id);
+        if (hasAnyOrderItems)
+            throw new InvalidOperationException("Cannot delete product because it is referenced by existing order items.");
 
-        if (hasActiveOrderItems)
-            throw new InvalidOperationException("Não é possível excluir um produto que está vinculado a pedidos ainda em andamento.");
-
-        // If product is only referenced in Delivered/Cancelled orders, deleting is allowed.
         _db.Products.Remove(product);
         _db.SaveChanges();
     }

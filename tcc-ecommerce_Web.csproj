@@ -13,4 +13,10 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0" />
   </ItemGroup>
 
+  <!-- Exclude tools folder (e.g. local migration utility) from default compile items -->
+  <ItemGroup>
+    <Compile Remove="tools\**\*.cs" />
+    <None Include="tools\**\*" />
+  </ItemGroup>
+
 </Project>
