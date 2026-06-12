@@ -75,7 +75,7 @@ public class ProductService : IProductService
         // would raise a foreign key violation. Require manual cleanup instead.
         var hasAnyOrderItems = _db.OrderItems.Any(oi => oi.ProductId == id);
         if (hasAnyOrderItems)
-            throw new InvalidOperationException("Cannot delete product because it is referenced by existing order items.");
+            throw new InvalidOperationException("Não é possível excluir o produto porque ele está vinculado a pedidos existentes.");
 
         _db.Products.Remove(product);
         _db.SaveChanges();
